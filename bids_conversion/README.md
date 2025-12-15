@@ -1,0 +1,249 @@
+# BIDS Conversion Pipeline
+
+This directory contains tools for automated batch conversion of DICOM neuroimaging files to BIDS (Brain Imaging Data Structure) format.
+
+**Author:** cy
+**Date:** 2025-07-18
+
+---
+
+## Table of Contents
+
+- [Overview](#overview)
+- [dcm2bids_batch.py](#dcm2bids_batchpy)
+  - [Purpose](#purpose)
+  - [Input Files](#input-files)
+  - [Output Files](#output-files)
+  - [Processing Steps](#processing-steps)
+  - [Usage](#usage)
+  - [Command-Line Arguments](#command-line-arguments)
+- [check_bids.py](#check_bidspy)
+  - [Purpose](#purpose-1)
+  - [What It Validates](#what-it-validates)
+  - [Usage](#usage-1)
+- [config.json](#configjson)
+  - [Purpose](#purpose-2)
+  - [Configuration Parameters](#configuration-parameters)
+  - [Important Notes](#important-notes)
+
+---
+
+## Overview
+
+This pipeline automates the conversion of DICOM files to BIDS format using `dcm2bids`, with automatic session directory detection, comprehensive logging, and validation tools to ensure conversion accuracy.
+
+---
+
+## dcm2bids_batch.py
+
+### Purpose
+
+The `dcm2bids_batch.py` script performs automated batch conversion of DICOM files to BIDS format with the following features:
+
+- Automatic session directory detection based on configurable patterns
+- Sequential processing of multiple sessions
+- Comprehensive logging with timestamps
+- Validation of DICOM file presence before conversion
+- Final summary report of conversion results
+
+### Input Files
+
+**DICOM Data Structure:**
+
+```
+{base_dir}/{session_pattern}/subdirectory/*.dcm     # DICOM files with .dcm extension
+{base_dir}/{session_pattern}/subdirectory/*.IMA     # DICOM files with .IMA extension  
+{base_dir}/{session_pattern}/subdirectory/*.ima     # DICOM files with .ima extension
+{base_dir}/{session_pattern}/subdirectory/*         # DICOM files without extension
+```
+
+**Configuration:**
+
+- `config.json` - dcm2bids configuration file defining conversion rules
+
+**Expected Directory Structure:**
+
+```
+base_dir/
+├── YXMLQ-WANG_XIN_LIANG004-01/
+│   └── subdirectory/
+│       ├── file1.dcm
+│       ├── file2.dcm
+│       └── ...
+└── ...
+```
+
+### Output Files
+
+**BIDS Structure:**
+
+```
+sub-{subject}/
+├── ses-{session}/
+│   ├── anat/
+│   │   ├── sub-{subject}_ses-{session}_T1w.nii.gz
+│   │   └── sub-{subject}_ses-{session}_T1w.json
+│   ├── func/
+│   │   ├── sub-{subject}_ses-{session}_run-{XX}_bold.nii.gz
+│   │   ├── sub-{subject}_ses-{session}_run-{XX}_bold.json
+│   │   └── ...
+│   └── fmap/
+│       ├── sub-{subject}_ses-{session}_magnitude1.nii.gz
+│       ├── sub-{subject}_ses-{session}_phasediff.nii.gz
+│       └── corresponding .json files
+└── ...
+```
+
+**Logging Output:**
+
+- `batch_{subject}_conversion.log` - Detailed conversion log with timestamps
+
+### Processing Steps
+
+1. Automatic detection of session directories based on configurable patterns
+2. Validation of DICOM file presence in each session directory
+3. Sequential dcm2bids conversion for each valid session
+4. Comprehensive logging of success/failure status
+5. Final summary report of conversion results
+
+### Usage
+
+**Custom subject and session range:**
+
+```bash
+python dcm2bids_batch.py -s 02 --start-session 1 --end-session 10
+```
+
+**Custom paths and configuration:**
+
+```bash
+python dcm2bids_batch.py -s 03 -b /path/to/dicom/data -c /path/to/config.json -o /path/to/bids/output
+```
+
+**Custom session naming pattern:**
+
+```bash
+python dcm2bids_batch.py -s 01 --session-pattern "CUSTOM_PATTERN_{}" --start-session 5 --end-session 15
+```
+
+### Command-Line Arguments
+
+- `-s, --subject` - Subject ID (e.g., "01" for sub-01)
+- `-b, --base-dir` - Base directory containing DICOM session folders
+- `-c, --config` - Path to dcm2bids configuration file (config.json)
+- `-o, --output-dir` - Output directory for BIDS dataset
+- `--start-session` - Starting session number (inclusive)
+- `--end-session` - Ending session number (inclusive)
+- `--session-pattern` - Session directory naming pattern (use `{}` as placeholder for session number)
+
+---
+
+## check_bids.py
+
+### Purpose
+
+The `check_bids.py` script validates the accuracy of DICOM-to-BIDS conversion by comparing the original DICOM data with the converted BIDS output.
+
+### What It Validates
+
+- **Task folder ordering:** Compares the order of task folders in the original DICOM directory with the run numbering in BIDS
+- **Acquisition times:** Extracts and compares acquisition timestamps from DICOM headers (`SeriesDate` and `SeriesTime` tags) with BIDS JSON metadata
+- **Run number consistency:** Verifies that task numbers from DICOM folders match the run numbers in BIDS filenames
+- **Data completeness:** Checks for missing DICOM files or BIDS outputs
+
+### Usage
+
+1. **Configure the script** by editing the main section:
+
+   ```python
+   BASE_DICOM_DIR = "/path/to/dicom/data"  # DICOM root directory
+   BASE_BIDS_DIR = "/path/to/bids/output"  # BIDS root directory
+   SUBJECT_ID = "01"  # Subject ID
+   SESSION_IDS = [1, 2, 3, 4, 5]  # List of sessions to check
+   ```
+2. **Run the validation:**
+
+   ```bash
+   python check_bids.py
+   ```
+3. **Review the output:** The script prints detailed comparison results for each session, including:
+
+   - Task folder names and numbers
+   - Acquisition times from DICOM and BIDS
+   - Match/mismatch status
+
+---
+
+## config.json
+
+### Purpose
+
+The `config.json` file defines the conversion rules for dcm2bids, specifying how different types of DICOM series should be identified and converted to BIDS format.
+
+### Configuration Parameters
+
+The configuration file contains a `descriptions` array with conversion rules for each data type:
+
+#### 1. **Anatomical Data (T1-weighted)**
+
+```json
+{
+  "datatype": "anat",
+  "suffix": "T1w",
+  "criteria": {
+    "SeriesDescription": "*t1*"
+  }
+}
+```
+
+- Matches DICOM series with "t1" in the SeriesDescription
+- Outputs to `anat/` directory with `T1w` suffix
+
+#### 2. **Field Maps**
+
+- **magnitude1:** First echo magnitude image (`*_e1.json`)
+- **magnitude2:** Second echo magnitude image (`*_e2.json`)
+- **phasediff:** Phase difference image (`*_ph.json`)
+
+All field maps are placed in the `fmap/` directory.
+
+#### 3. **Functional Data (BOLD)**
+
+```json
+{
+  "datatype": "func",
+  "suffix": "bold",
+  "customLabels": "task-visual",
+  "criteria": {
+    "SeriesDescription": "TASK*"
+  },
+  "sidecarChanges": {
+    "TaskName": "visual"
+  }
+}
+```
+
+- Matches DICOM series with SeriesDescription starting with "TASK"
+- Outputs to `func/` directory with `task-visual_bold` suffix
+- Adds `"TaskName": "visual"` to the JSON sidecar files
+
+### Important Notes
+
+- **Criteria matching:** Uses wildcard patterns (`*`) for flexible matching
+- **Custom labels:** The `customLabels` field adds BIDS entities (e.g., `task-visual`)
+- **Sidecar changes:** The `sidecarChanges` field modifies JSON metadata in the output
+- **Order matters:** Rules are evaluated in order; the first matching rule is applied
+
+To customize the configuration for your dataset, modify the criteria patterns to match your DICOM SeriesDescription or other DICOM tags.
+
+---
+
+## Requirements
+
+- Python 3.x
+- dcm2bids
+- pydicom (for check_bids.py)
+
+## License
+
+Please refer to the main project license.

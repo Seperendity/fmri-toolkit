@@ -1,0 +1,43 @@
+{
+   "descriptions": [
+      {
+         "datatype": "anat",
+         "suffix": "T1w",
+         "criteria": {
+            "SeriesDescription": "*t1*"
+         }
+      },
+      {
+         "datatype": "fmap",
+         "suffix": "magnitude1",
+         "criteria": {
+            "SidecarFilename": "*_e1.json"
+         }
+      },
+      {
+         "datatype": "fmap",
+         "suffix": "magnitude2",
+         "criteria": {
+            "SidecarFilename": "*_e2.json"
+         }
+      },
+      {
+         "datatype": "fmap",
+         "suffix": "phasediff",
+         "criteria": {
+            "SidecarFilename": "*_ph.json"
+         }
+      },
+      {
+         "datatype": "func",
+         "suffix": "bold",
+         "customLabels": "task-visual",
+         "criteria": {
+            "SeriesDescription": "TASK*"
+         },
+         "sidecarChanges": {
+            "TaskName": "visual"
+         }
+      }
+   ]
+}
