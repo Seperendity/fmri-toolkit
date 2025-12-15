@@ -1,9 +1,9 @@
 # fMRI Toolkit
 
-[![Python 3.8+](https://img.shields.io/badge/python-3.8+-blue.svg)](https://www.python.org/downloads/)
+[![Python 3.9+](https://img.shields.io/badge/python-3.9.21-blue.svg)](https://www.python.org/downloads/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![FreeSurfer](https://img.shields.io/badge/FreeSurfer-6.0+-green.svg)](https://surfer.nmr.mgh.harvard.edu/)
-[![FSL](https://img.shields.io/badge/FSL-6.0+-orange.svg)](https://fsl.fmrib.ox.ac.uk/fsl/)
+[![FreeSurfer](https://img.shields.io/badge/FreeSurfer-6.0.0-green.svg)](https://surfer.nmr.mgh.harvard.edu/)
+[![FSL](https://img.shields.io/badge/FSL-6.0.5-orange.svg)](https://fsl.fmrib.ox.ac.uk/fsl/)
 
 A comprehensive toolkit for processing functional MRI (fMRI) data, from DICOM conversion through preprocessing to GLM-based beta coefficient extraction. This toolkit provides an end-to-end pipeline for neuroimaging research with support for parallel processing and surface-based analysis.
 
@@ -79,13 +79,13 @@ fmri-toolkit/
 
 ### Software Requirements
 
-| Software             | Version | Purpose                                     |
-| -------------------- | ------- | ------------------------------------------- |
-| **Python**     | 3.8+    | Core scripting language                     |
-| **FreeSurfer** | 6.0+    | Surface reconstruction, registration        |
-| **FSL**        | 6.0+    | Motion/distortion correction, preprocessing |
-| **dcm2bids**   | 3.0+    | DICOM to BIDS conversion                    |
-| **dcm2niix**   | 1.0.20+ | NIfTI conversion (dcm2bids dependency)      |
+| Software             | Version       | Purpose                                     |
+| -------------------- | ------------- | ------------------------------------------- |
+| **Python**     | 3.9.21        | Core scripting language                     |
+| **FreeSurfer** | 6.0.0         | Surface reconstruction, registration        |
+| **FSL**        | 6.0.5         | Motion/distortion correction, preprocessing |
+| **dcm2bids**   | 3.2.0         | DICOM to BIDS conversion                    |
+| **dcm2niix**   | v1.0.20250505 | NIfTI conversion (dcm2bids dependency)      |
 
 ### Python Dependencies
 
@@ -94,13 +94,10 @@ fmri-toolkit/
 pip install numpy scipy nibabel matplotlib
 
 # For GLM analysis
-pip install glmsingle
+pip install git+https://github.com/cvnlab/GLMsingle.git
 
 # For BIDS validation
 pip install pydicom
-
-# Optional: progress bars
-pip install tqdm
 ```
 
 ### Environment Setup
@@ -255,11 +252,11 @@ Parallel batch preprocessing pipeline with full distortion correction and regist
 
 GLM analysis pipeline for single-trial beta coefficient estimation in volume space, followed by surface projection and visual cortex extraction.
 
-| Script                       | Description                                                    |
-| ---------------------------- | -------------------------------------------------------------- |
-| `glmsingle_session.py`     | GLMsingle analysis for beta estimation (volume space)          |
+| Script                       | Description                                                     |
+| ---------------------------- | --------------------------------------------------------------- |
+| `glmsingle_session.py`     | GLMsingle analysis for beta estimation (volume space)           |
 | `volume_to_fs_funcdata.py` | Convert volume betas to FreeSurfer surface space with smoothing |
-| `save_beta_from_fs5.py`    | Extract visual cortex vertices and save final betas            |
+| `save_beta_from_fs5.py`    | Extract visual cortex vertices and save final betas             |
 
 **Processing Steps:**
 
