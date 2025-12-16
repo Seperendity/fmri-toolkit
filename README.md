@@ -126,16 +126,16 @@ The toolkit implements a three-stage pipeline for complete fMRI data processing:
 │                           fMRI PROCESSING PIPELINE                          │
 ├─────────────────────────────────────────────────────────────────────────────┤
 │                                                                             │
-│  ┌──────────────────┐    ┌──────────────────┐    ┌──────────────────┐      │
-│  │  STAGE 1         │    │  STAGE 2         │    │  STAGE 3         │      │
-│  │  BIDS Conversion │───▶│  Preprocessing   │───▶│  GLM Analysis    │      │
-│  └──────────────────┘    └──────────────────┘    └──────────────────┘      │
+│  ┌──────────────────┐    ┌──────────────────┐    ┌──────────────────┐       │
+│  │  STAGE 1         │    │  STAGE 2         │    │  STAGE 3         │       │
+│  │  BIDS Conversion │───▶│  Preprocessing   │───▶│  GLM Analysis         │  
+│  └──────────────────┘    └──────────────────┘    └──────────────────┘       │
 │         │                        │                       │                  │
 │         ▼                        ▼                       ▼                  │
-│  • DICOM → NIfTI          • Slice Timing          • GLMsingle (volume)     │
-│  • BIDS organization      • Motion Correction     • Beta → Surface         │
-│  • Metadata extraction    • Distortion Correction • Visual cortex extract  │
-│  • Validation             • Registration (BBR)    • fsaverage5 mapping     │
+│  • DICOM → NIfTI          • Slice Timing          • GLMsingle (volume)      │
+│  • BIDS organization      • Motion Correction     • Beta → Surface          │
+│  • Metadata extraction    • Distortion Correction • Visual cortex extract   │
+│  • Validation             • Registration (BBR)    • fsaverage5 mapping      │
 │                                                                             │
 └─────────────────────────────────────────────────────────────────────────────┘
 ```
