@@ -11,19 +11,32 @@ A comprehensive toolkit for processing functional MRI (fMRI) data, from DICOM co
 
 ## Table of Contents
 
-- [Overview](#overview)
-- [Features](#features)
-- [Directory Structure](#directory-structure)
-- [Installation \& Prerequisites](#installation--prerequisites)
-- [Pipeline Workflow](#pipeline-workflow)
-- [Quick Start](#quick-start)
-- [Module Documentation](#module-documentation)
-  - [BIDS Conversion](#1-bids-conversion)
-  - [fMRI Preprocessing](#2-fmri-preprocessing)
-  - [GLM Beta Analysis](#3-glm-beta-analysis)
-- [Data Organization](#data-organization)
-- [Contributing](#contributing)
-- [License](#license)
+- [fMRI Toolkit](#fmri-toolkit)
+  - [Table of Contents](#table-of-contents)
+  - [Overview](#overview)
+  - [Features](#features)
+  - [Directory Structure](#directory-structure)
+  - [Installation \& Prerequisites](#installation--prerequisites)
+    - [Software Requirements](#software-requirements)
+    - [Python Dependencies](#python-dependencies)
+    - [Environment Setup](#environment-setup)
+  - [Pipeline Workflow](#pipeline-workflow)
+  - [Quick Start](#quick-start)
+    - [Step 1: Convert DICOM to BIDS](#step-1-convert-dicom-to-bids)
+    - [Step 2: Preprocess fMRI Data](#step-2-preprocess-fmri-data)
+    - [Step 3: Run GLM Analysis](#step-3-run-glm-analysis)
+  - [Module Documentation](#module-documentation)
+    - [1. BIDS Conversion](#1-bids-conversion)
+    - [2. fMRI Preprocessing](#2-fmri-preprocessing)
+    - [3. GLM Beta Analysis](#3-glm-beta-analysis)
+  - [Data Organization](#data-organization)
+    - [Expected Input Structure (BIDS)](#expected-input-structure-bids)
+    - [Output Structure (Preprocessed)](#output-structure-preprocessed)
+    - [Output Structure (GLM Results)](#output-structure-glm-results)
+  - [Contributing](#contributing)
+    - [Code Style](#code-style)
+  - [License](#license)
+  - [Acknowledgments](#acknowledgments)
 
 ---
 
@@ -126,10 +139,10 @@ The toolkit implements a three-stage pipeline for complete fMRI data processing:
 │                           fMRI PROCESSING PIPELINE                          │
 ├─────────────────────────────────────────────────────────────────────────────┤
 │                                                                             │
-│  ┌──────────────────┐    ┌──────────────────┐    ┌──────────────────┐       │
-│  │  STAGE 1         │    │  STAGE 2         │    │  STAGE 3         │       │
-│  │  BIDS Conversion │───▶│  Preprocessing   │───▶│  GLM Analysis         │  
-│  └──────────────────┘    └──────────────────┘    └──────────────────┘       │
+│  ┌──────────────────┐      ┌──────────────────┐     ┌──────────────────┐    │
+│  │  STAGE 1         │      │  STAGE 2         │     │  STAGE 3         │    │
+│  │  BIDS Conversion │──▶  │ Preprocessing    |───▶ │  GLM Analysis    │    │  
+│  └──────────────────┘      └──────────────────┘     └──────────────────┘    │
 │         │                        │                       │                  │
 │         ▼                        ▼                       ▼                  │
 │  • DICOM → NIfTI          • Slice Timing          • GLMsingle (volume)      │
