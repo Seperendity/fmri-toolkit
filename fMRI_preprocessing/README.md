@@ -24,6 +24,7 @@ Parallel batch preprocessing pipeline for functional MRI data with automated sli
 - [Configuration](#configuration)
 - [Resume Functionality](#resume-functionality)
 - [Requirements](#requirements)
+- [Anatomical and Fieldmap Preprocessing](#anatomical-and-fieldmap-preprocessing)
 
 ---
 
@@ -301,6 +302,78 @@ These files are reused for all subsequent runs to ensure consistency.
 ### Temporary File Cleanup
 
 Intermediate files (`f_skip_stc.nii.gz`, `f_skip_stc_mc.nii.gz`) are automatically removed after processing to save disk space.
+
+---
+
+## Anatomical and Fieldmap Preprocessing
+
+The `fmri_anat_preprocessing.py` script performs automated preprocessing including anatomical skull-stripping, tissue segmentation, and fieldmap correction for multiple sessions of a specified subject.
+
+**Author:** wrx & cy
+**Date:** 2025-07-26
+
+### Input Files
+
+#### Anatomical (per subject, ses-01 only)
+
+```
+{subject}_ses-01_T1w.nii.gz                    # Raw T1-weighted anatomical image
+```
+
+#### Fieldmap (per session)
+
+```
+{subject}_{session}_magnitude1.nii.gz          # Fieldmap magnitude image
+{subject}_{session}_phasediff.nii.gz           # Fieldmap phase difference image
+```
+
+### Output Files
+
+#### Anatomical Processing Output
+
+```
+T1_brain.nii.gz                                # Skull-stripped T1 brain
+T1_brain_pve_0.nii.gz                          # CSF probability map
+T1_brain_pve_1.nii.gz                          # Gray matter probability map
+T1_brain_pve_2.nii.gz                          # White matter probability map
+T1_wmseg.nii.gz                                # Binary white matter mask (threshold: 0.5)
+T1_gm_mask.nii.gz                              # Binary gray matter mask (threshold: 0.4)
+```
+
+#### Fieldmap Processing Output (per session)
+
+```
+fmap_mag_brain1.nii.gz                         # Initial skull-stripped magnitude image
+fmap_mag_brain.nii.gz                          # Final processed magnitude brain (eroded)
+fmap_rads.nii.gz                               # Fieldmap in radians for distortion correction
+```
+
+#### Quality Control Images (per session)
+
+```
+field_brain_x_slices.png                       # Magnitude brain sagittal view QC
+field_brain_y_slices.png                       # Magnitude brain coronal view QC
+field_brain_z_slices.png                       # Magnitude brain axial view QC
+field_fmap_x_slices.png                        # Fieldmap sagittal view QC
+field_fmap_y_slices.png                        # Fieldmap coronal view QC
+field_fmap_z_slices.png                        # Fieldmap axial view QC
+```
+
+### Anatomical Preprocessing Usage
+
+```bash
+# Basic usage - process all sessions for sub-02
+python fmri_anat_preprocessing.py sub-02
+
+# Skip anatomical image processing
+python fmri_anat_preprocessing.py sub-02 --skip-anatomical
+
+# Process only specific sessions
+python fmri_anat_preprocessing.py sub-02 --sessions ses-01 ses-02 ses-05
+
+# Use custom data directory
+python fmri_anat_preprocessing.py sub-02 --base-dir /path/to/your/data
+```
 
 ---
 
